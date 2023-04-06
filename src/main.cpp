@@ -18,8 +18,12 @@
 #include <SoftwareSerial.h>           //If you run into compilation errors regarding this include, see README
 #include "SparkFun_UHF_RFID_Reader.h" //Library for controlling the M6E Nano module
 
+// CONSTANTS
+#define COUNT_MAX 500     // Maximum amount of tags to be scanned before stopping
+
 // GLOBAL VARIABLES
-bool formatCheck;     //Determines if data is printed to serial monitor as csv or with labels
+bool formatCheck;         // Determines if data is printed to serial monitor as csv or with labels
+int scanCount = 1;     // Tracks amount of tags scanned
 
 SoftwareSerial softSerial(2, 3); //RX, TX
 RFID nano; //Create instance
@@ -39,7 +43,8 @@ void printWithLabels()
     }
     else if (responseType == RESPONSE_IS_TAGFOUND)
     {
-      //If we have a full record we can pull out the fun bits
+      scanCount++;
+
       int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
 
       long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
@@ -49,6 +54,10 @@ void printWithLabels()
       byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
 
       long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
+
+      Serial.print(F(" count["));
+      Serial.print(scanCount);
+      Serial.print(F("]"));
 
       Serial.print(F(" rssi["));
       Serial.print(rssi);
@@ -101,13 +110,15 @@ void printAsCSV()
 
     if (responseType == RESPONSE_IS_TAGFOUND)
     {
-      //If we have a full record we can pull out the fun bits
+      scanCount++;
       int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
       long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
       long timeStamp = nano.getTagTimestamp(); //Get the time this was read, (ms) since last keep-alive message
       byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
       long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
 
+      Serial.print(count);
+      
       Serial.print(rssi);
       Serial.print(",");
       Serial.print(freq);
@@ -215,7 +226,7 @@ void setup()
   Serial.read(); //Throw away the user's character
 
   if(formatCheck) {
-    Serial.print("rssi, freq, timestamp, epc, phase\n");  //Print CSV header
+    Serial.print("count, rssi, freq, timestamp, epc, phase\n");  //Print CSV header
   }
 
   nano.startReading(); //Begin scanning for tags
