@@ -22,7 +22,7 @@
 #define COUNT_MAX 500     // Maximum amount of tags to be scanned before stopping
 
 // GLOBAL VARIABLES
-bool formatCheck = 1;         // Determines if data is printed to serial monitor as csv (1) or with labels (0)
+bool formatCheck = 1;     // Determines if data is printed to serial monitor as csv (1) or with labels (0)
 int scanCount = 1;        // Tracks amount of tags scanned
 
 SoftwareSerial softSerial(2, 3); //RX, TX
@@ -56,7 +56,11 @@ void printWithLabels()
       long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
 
       Serial.print(F(" count["));
-      Serial.print(scanCount);
+      Serial.print(scanCount++);
+      Serial.print(F("]"));
+
+      Serial.print(F(" time["));
+      Serial.print(millis());
       Serial.print(F("]"));
 
       Serial.print(F(" rssi["));
@@ -67,7 +71,7 @@ void printWithLabels()
       Serial.print(freq);
       Serial.print(F("]"));
 
-      Serial.print(F(" time["));
+      Serial.print(F(" timestamp["));
       Serial.print(timeStamp);
       Serial.print(F("]"));
 
@@ -108,9 +112,8 @@ void printAsCSV()
   {
     byte responseType = nano.parseResponse(); //Break response into tag ID, RSSI, frequency, and timestamp
 
-    if (responseType == RESPONSE_IS_KEEPALIVE) {
-    }
-    else if (responseType == RESPONSE_IS_TAGFOUND)
+  
+    if (responseType == RESPONSE_IS_TAGFOUND)
     {
       int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
       long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
@@ -118,7 +121,9 @@ void printAsCSV()
       byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
       long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
 
-      Serial.print(scanCount);
+      Serial.print(scanCount++);
+      Serial.print(",");
+      Serial.print(millis());
       Serial.print(",");
       Serial.print(rssi);
       Serial.print(",");
@@ -135,8 +140,6 @@ void printAsCSV()
       Serial.print(",");
       Serial.print(phase);
       Serial.print("\n");
-
-      scanCount++;
       
     }
   }
@@ -161,7 +164,7 @@ boolean setupNano(long baudRate)
 
   if (nano.msg[0] == ERROR_WRONG_OPCODE_RESPONSE)
   {
-    //This happens if the baud rate is correct but the module is doing a ccontinuous read
+    //This happens if the baud rate is correct but the module is doing a continuous read
     nano.stopReading();
 
     Serial.println(F("#Module continuously reading. Asking it to stop..."));
@@ -211,57 +214,24 @@ void setup()
   nano.setReadPower(2700); //5.00 dBm. Higher values may caues USB port to brown out
   //Max Read TX Power is 27.00 dBm and may cause temperature-limit throttling
 
-  /*
-  Serial.println("#Scan tags in datalogging format? (y/n): ");
-  while (!Serial.available());
-  byte userInput = Serial.read();
-
-  switch (userInput) {
-    case 'y':
-      Serial.println("#Datalogging format selected");
-      formatCheck = true;
-      break;
-    case 'n':
-      Serial.println("#Default format selected");
-      formatCheck = false;
-      break;
-    default:
-      formatCheck = false;
-      Serial.println("#Error: invalid input, default format selected");
-  }
-  */
-
   Serial.println(F("#If datalogging with PuTTY or other terminal emulator, run it now. Press a key to begin scanning for tags. "));
   while (!Serial.available()); //Wait for user to send a character
   Serial.read(); //Throw away the user's character
 
   if(formatCheck) {
-    Serial.print("count, rssi, freq, timestamp, epc, phase\n");  //Print CSV header
+    Serial.print("Count, Time (ms), RSSI (dBm), Frequency (KHz), Timestamp (ms), EPC, Phase (Degrees)\n");  //Print CSV header
   }
 
   nano.startReading(); //Begin scanning for tags
 }
 
 void loop() {
-  /*
-  // If printing as csv, program will continue until COUNT_MAX tags have been scanned, then stop.
-  if (formatCheck == 1 && scanCount <= COUNT_MAX) {
+  switch (formatCheck) {
+    case true:
       printAsCSV();
-      scanCount++;
-    }
-  // Once COUNT_MAX has been reached, stop scanning for tags until user enters an input to serial monitor.
-  else if (formatCheck == 1 && scanCount > COUNT_MAX) {
-      nano.stopReading();
-      while (!Serial.available());
-      Serial.read();
-      nano.startReading();
-      scanCount = 1;
+      break;
+    case false:
+      printWithLabels();
+      break;
   }
-  // If printing with labels, program will continue indefinitely.
-  else {
-    printWithLabels();
-    scanCount++;
-  }
-  */
-  printAsCSV();
 }
