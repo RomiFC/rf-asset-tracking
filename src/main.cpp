@@ -9,7 +9,7 @@
   If using the Simultaneous RFID Tag Reader (SRTR) shield, make sure the serial slide
   switch is in the 'SW-UART' position
 
-  This code uses a modified version of the SparkFun_UHR_RFID_Reader library.
+  This code uses a modified version of the SparkFun_UHF_RFID_Reader library.
   Versions downloaded online from SparkFun or the GitHub link above will not work.
 */
 
@@ -227,9 +227,25 @@ void setup()
 
 void loop() {
   switch (formatCheck) {
+
     case true:
-      printAsCSV();
+      if (scanCount <= COUNT_MAX)
+        printAsCSV();
+
+      // If maximum count has been reached, reset counter and pause scanning until user inputs to serial monitor
+      else if (scanCount > COUNT_MAX) {
+        scanCount = 1;
+        nano.stopReading();
+
+        while (!Serial.available());      //Wait for user to send a character
+        Serial.read();                    //Throw away the user's character
+
+        Serial.print("Count, Time (ms), RSSI (dBm), Frequency (KHz), Timestamp (ms), EPC, Phase (Degrees)\n");
+        nano.startReading();
+      }
+      
       break;
+
     case false:
       printWithLabels();
       break;
