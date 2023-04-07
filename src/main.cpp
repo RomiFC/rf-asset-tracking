@@ -228,73 +228,43 @@ void setup()
 }
 
 void loop() {
-  if (nano.check() == true) //Check to see if any new data has come in from module
+    if (nano.check() == true) //Check to see if any new data has come in from module
   {
     byte responseType = nano.parseResponse(); //Break response into tag ID, RSSI, frequency, and timestamp
 
-    if (responseType == RESPONSE_IS_KEEPALIVE)
-    {
-      Serial.println(F("Scanning"));
-    }
-    else if (responseType == RESPONSE_IS_TAGFOUND)
+  
+    if (responseType == RESPONSE_IS_TAGFOUND)
     {
       int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
-
       long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
-
       long timeStamp = nano.getTagTimestamp(); //Get the time this was read, (ms) since last keep-alive message
-
       byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
-
       long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
 
-      Serial.print(F(" count["));
       Serial.print(scanCount++);
-      Serial.print(F("]"));
-
-      Serial.print(F(" time["));
+      Serial.print(",");
       Serial.print(millis());
-      Serial.print(F("]"));
-
-      Serial.print(F(" rssi["));
+      Serial.print(",");
       Serial.print(rssi);
-      Serial.print(F("]"));
-
-      Serial.print(F(" freq["));
+      Serial.print(",");
       Serial.print(freq);
-      Serial.print(F("]"));
-
-      Serial.print(F(" timestamp["));
+      Serial.print(",");
       Serial.print(timeStamp);
-      Serial.print(F("]"));
-
-      //Print EPC bytes, this is a subsection of bytes from the response/msg array
-      Serial.print(F(" epc["));
+      Serial.print(",");
       for (byte x = 0 ; x < tagEPCBytes ; x++)
       {
         if (nano.msg[31 + x] < 0x10) Serial.print(F("0")); //Pretty print
         Serial.print(nano.msg[31 + x], HEX);
         Serial.print(F(" "));
       }
-      Serial.print(F("]"));
-
-      Serial.print(F(" phase["));
+      Serial.print(",");
       Serial.print(phase);
-      Serial.print(F("]"));
-
-      Serial.println();
-    }
-    
-    else if (responseType == ERROR_CORRUPT_RESPONSE)
-    {
-      Serial.println("Bad CRC");
-    }
-    else
-    {
-      //Unknown response
-      Serial.print("Unknown error");
+      Serial.print("\n");
+      
     }
   }
+
+}
 
 /* 
   switch (formatCheck) {
@@ -322,4 +292,4 @@ void loop() {
       break;
   }
    */
-}
+
