@@ -36,6 +36,7 @@ RFID nano;                       // Create instance
 //Prints information from scanned tags to serial monitor with relevant labels
 //This will print errors and idle notes as well, this should be used if printing to serial
 //monitor in csv format is not necessary.
+/* 
 void printWithLabels()
 {
   if (nano.check() == true) //Check to see if any new data has come in from module
@@ -104,6 +105,7 @@ void printWithLabels()
 
 //Prints information from scanned tags to serial monitor in CSV format with header. 
 //This will not print errors and will remain idle if no tags are being scanned
+
 void printAsCSV()
 {
   if (nano.check() == true) //Check to see if any new data has come in from module
@@ -142,7 +144,7 @@ void printAsCSV()
     }
   }
 }
-
+ */
 
 //Gracefully handles a reader that is already configured and already reading continuously. 
 //Because Stream does not have a .begin() we have to do this outside the library
@@ -223,6 +225,45 @@ void setup()
 }
 
 void loop() {
+    if (nano.check() == true) //Check to see if any new data has come in from module
+  {
+    byte responseType = nano.parseResponse(); //Break response into tag ID, RSSI, frequency, and timestamp
+
+  
+    if (responseType == RESPONSE_IS_TAGFOUND)
+    {
+      int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
+      long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
+      long timeStamp = nano.getTagTimestamp(); //Get the time this was read, (ms) since last keep-alive message
+      byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
+      long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
+
+      Serial.print(scanCount++);
+      Serial.print(",");
+      Serial.print(millis());
+      Serial.print(",");
+      Serial.print(rssi);
+      Serial.print(",");
+      Serial.print(freq);
+      Serial.print(",");
+      Serial.print(timeStamp);
+      Serial.print(",");
+      for (byte x = 0 ; x < tagEPCBytes ; x++)
+      {
+        if (nano.msg[31 + x] < 0x10) Serial.print(F("0")); //Pretty print
+        Serial.print(nano.msg[31 + x], HEX);
+        Serial.print(F(" "));
+      }
+      Serial.print(",");
+      Serial.print(phase);
+      Serial.print("\n");
+      
+    }
+  }
+
+}
+
+/* 
   switch (formatCheck) {
 
     case CSV_FORMAT:
@@ -247,4 +288,5 @@ void loop() {
       printWithLabels();
       break;
   }
-}
+   */
+
