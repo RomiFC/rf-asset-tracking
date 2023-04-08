@@ -20,13 +20,16 @@
 
 // CONSTANTS
 #define COUNT_MAX 500     // Maximum amount of tags to be scanned before stopping
+#define TX_POWER 2700     // Values higher than 500 may damage USB. Max power is 27 dBm (2700) and may cause throttling
+#define DEFAULT_FORMAT 0  // Print to serial monitor with all necessary labels
+#define CSV_FORMAT 1      // Print to serial monitor as csv and stop when COUNT_MAX tags have been scanned
 
 // GLOBAL VARIABLES
 bool formatCheck = 1;     // Determines if data is printed to serial monitor as csv (1) or with labels (0)
 int scanCount = 1;        // Tracks amount of tags scanned
 
-SoftwareSerial softSerial(2, 3); //RX, TX
-RFID nano; //Create instance
+SoftwareSerial softSerial(2, 3); // Serial communication (RX, TX) on digital pins
+RFID nano;                       // Create instance
 
 
 
@@ -46,13 +49,9 @@ void printWithLabels()
     else if (responseType == RESPONSE_IS_TAGFOUND)
     {
       int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
-
       long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
-
       long timeStamp = nano.getTagTimestamp(); //Get the time this was read, (ms) since last keep-alive message
-
       byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
-
       long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
 
       Serial.print(F(" count["));
@@ -96,9 +95,8 @@ void printWithLabels()
     {
       Serial.println("Bad CRC");
     }
-    else
+    else  // Unknown response
     {
-      //Unknown response
       Serial.print("Unknown error");
     }
   }
@@ -167,7 +165,7 @@ boolean setupNano(long baudRate)
     //This happens if the baud rate is correct but the module is doing a continuous read
     nano.stopReading();
 
-    Serial.println(F("#Module continuously reading. Asking it to stop..."));
+    Serial.println(F("Module continuously reading. Asking it to stop..."));
 
     delay(1500);
   }
@@ -189,7 +187,6 @@ boolean setupNano(long baudRate)
 
   //The M6E has these settings no matter what
   nano.setTagProtocol(); //Set protocol to GEN2
-
   nano.setAntennaPort(); //Set TX/RX antenna ports to 1
 
   return (true); //We are ready to rock
@@ -205,21 +202,21 @@ void setup()
 
   if (setupNano(38400) == false) //Configure nano to run at 38400bps
   {
-    Serial.println(F("#Module failed to respond. Please check wiring."));
+    Serial.println(F("Module failed to respond. Please check wiring."));
     while (1); //Freeze!
   }
 
   nano.setRegion(REGION_NORTHAMERICA); //Set to North America
+  nano.setReadPower(TX_POWER);
 
-  nano.setReadPower(2700); //5.00 dBm. Higher values may caues USB port to brown out
-  //Max Read TX Power is 27.00 dBm and may cause temperature-limit throttling
+  // Wait for user to entire character to continue
+  Serial.println(F("If datalogging with PuTTY or other terminal emulator, run it now. Press a key to begin scanning for tags. "));
+  while (!Serial.available());
+  Serial.read();
 
-  Serial.println(F("#If datalogging with PuTTY or other terminal emulator, run it now. Press a key to begin scanning for tags. "));
-  while (!Serial.available()); //Wait for user to send a character
-  Serial.read(); //Throw away the user's character
-
+  // Print CSV header
   if(formatCheck) {
-    Serial.print("Count, Time (ms), RSSI (dBm), Frequency (KHz), Timestamp (ms), EPC, Phase (Degrees)\n");  //Print CSV header
+    Serial.print("Count, Time (ms), RSSI (dBm), Frequency (KHz), Timestamp (ms), EPC, Phase (Degrees)\n"); 
   }
 
   nano.startReading(); //Begin scanning for tags
@@ -228,7 +225,7 @@ void setup()
 void loop() {
   switch (formatCheck) {
 
-    case true:
+    case CSV_FORMAT:
       if (scanCount <= COUNT_MAX)
         printAsCSV();
 
@@ -246,7 +243,7 @@ void loop() {
       
       break;
 
-    case false:
+    case DEFAULT_FORMAT:
       printWithLabels();
       break;
   }
