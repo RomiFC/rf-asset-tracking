@@ -36,111 +36,78 @@ RFID nano;                       // Create instance
 //Prints information from scanned tags to serial monitor with relevant labels
 //This will print errors and idle notes as well, this should be used if printing to serial
 //monitor in csv format is not necessary.
-void printWithLabels()
-{
-  if (nano.check() == true) //Check to see if any new data has come in from module
+void printWithLabels() {
+  int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
+  long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
+  long timeStamp = nano.getTagTimestamp(); //Get the time this was read, (ms) since last keep-alive message
+  byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
+  long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
+
+  Serial.print(F(" count["));
+  Serial.print(scanCount++);
+  Serial.print(F("]"));
+
+  Serial.print(F(" time["));
+  Serial.print(millis());
+  Serial.print(F("]"));
+
+  Serial.print(F(" rssi["));
+  Serial.print(rssi);
+  Serial.print(F("]"));
+
+  Serial.print(F(" freq["));
+  Serial.print(freq);
+  Serial.print(F("]"));
+
+  Serial.print(F(" timestamp["));
+  Serial.print(timeStamp);
+  Serial.print(F("]"));
+
+  //Print EPC bytes, this is a subsection of bytes from the response/msg array
+  Serial.print(F(" epc["));
+  for (byte x = 0 ; x < tagEPCBytes ; x++)
   {
-    byte responseType = nano.parseResponse(); //Break response into tag ID, RSSI, frequency, and timestamp
-
-    if (responseType == RESPONSE_IS_KEEPALIVE)
-    {
-      Serial.println(F("Scanning"));
-    }
-    else if (responseType == RESPONSE_IS_TAGFOUND)
-    {
-      int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
-      long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
-      long timeStamp = nano.getTagTimestamp(); //Get the time this was read, (ms) since last keep-alive message
-      byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
-      long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
-
-      Serial.print(F(" count["));
-      Serial.print(scanCount++);
-      Serial.print(F("]"));
-
-      Serial.print(F(" time["));
-      Serial.print(millis());
-      Serial.print(F("]"));
-
-      Serial.print(F(" rssi["));
-      Serial.print(rssi);
-      Serial.print(F("]"));
-
-      Serial.print(F(" freq["));
-      Serial.print(freq);
-      Serial.print(F("]"));
-
-      Serial.print(F(" timestamp["));
-      Serial.print(timeStamp);
-      Serial.print(F("]"));
-
-      //Print EPC bytes, this is a subsection of bytes from the response/msg array
-      Serial.print(F(" epc["));
-      for (byte x = 0 ; x < tagEPCBytes ; x++)
-      {
-        if (nano.msg[31 + x] < 0x10) Serial.print(F("0")); //Pretty print
-        Serial.print(nano.msg[31 + x], HEX);
-        Serial.print(F(" "));
-      }
-      Serial.print(F("]"));
-
-      Serial.print(F(" phase["));
-      Serial.print(phase);
-      Serial.print(F("]"));
-
-      Serial.println();
-    }
-    
-    else if (responseType == ERROR_CORRUPT_RESPONSE)
-    {
-      Serial.println("Bad CRC");
-    }
-    else  // Unknown response
-    {
-      Serial.print("Unknown error");
-    }
+    if (nano.msg[31 + x] < 0x10) Serial.print(F("0")); //Pretty print
+    Serial.print(nano.msg[31 + x], HEX);
+    Serial.print(F(" "));
   }
+  Serial.print(F("]"));
+
+  Serial.print(F(" phase["));
+  Serial.print(phase);
+  Serial.print(F("]"));
+
+  Serial.println();
 }
 
 //Prints information from scanned tags to serial monitor in CSV format with header. 
 //This will not print errors and will remain idle if no tags are being scanned
-void printAsCSV()
-{
-  if (nano.check() == true) //Check to see if any new data has come in from module
+void printAsCSV() {
+  int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
+  long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
+  long timeStamp = nano.getTagTimestamp(); //Get the time this was read, (ms) since last keep-alive message
+  byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
+  long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
+
+  Serial.print(scanCount++);
+  Serial.print(",");
+  Serial.print(millis());
+  Serial.print(",");
+  Serial.print(rssi);
+  Serial.print(",");
+  Serial.print(freq);
+  Serial.print(",");
+  Serial.print(timeStamp);
+  Serial.print(",");
+  for (byte x = 0 ; x < tagEPCBytes ; x++)
   {
-    byte responseType = nano.parseResponse(); //Break response into tag ID, RSSI, frequency, and timestamp
-
-  
-    if (responseType == RESPONSE_IS_TAGFOUND)
-    {
-      int rssi = nano.getTagRSSI(); //Get the RSSI for this tag read
-      long freq = nano.getTagFreq(); //Get the frequency this tag was detected at
-      long timeStamp = nano.getTagTimestamp(); //Get the time this was read, (ms) since last keep-alive message
-      byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
-      long phase = nano.getTagPhase();  //Get received tag phase from 0 to 180 degrees
-
-      Serial.print(scanCount++);
-      Serial.print(",");
-      Serial.print(millis());
-      Serial.print(",");
-      Serial.print(rssi);
-      Serial.print(",");
-      Serial.print(freq);
-      Serial.print(",");
-      Serial.print(timeStamp);
-      Serial.print(",");
-      for (byte x = 0 ; x < tagEPCBytes ; x++)
-      {
-        if (nano.msg[31 + x] < 0x10) Serial.print(F("0")); //Pretty print
-        Serial.print(nano.msg[31 + x], HEX);
-        Serial.print(F(" "));
-      }
-      Serial.print(",");
-      Serial.print(phase);
-      Serial.print("\n");
-      
-    }
+    if (nano.msg[31 + x] < 0x10) Serial.print(F("0")); //Pretty print
+    Serial.print(nano.msg[31 + x], HEX);
+    Serial.print(F(" "));
   }
+  Serial.print(",");
+  Serial.print(phase);
+  Serial.print("\n");
 }
 
 //Gracefully handles a reader that is already configured and already reading continuously. 
@@ -222,30 +189,43 @@ void setup()
 }
 
 void loop() {
+  if (nano.check() == true) {
+    byte responseType = nano.parseResponse();
 
-  switch (formatCheck) {
+    switch (responseType) {
 
-    case CSV_FORMAT:
-      if (scanCount <= COUNT_MAX)
-        printAsCSV();
+      case RESPONSE_IS_KEEPALIVE:
+        if (!formatCheck)
+        Serial.println(F("Scanning"));
 
-      // If maximum count has been reached, reset counter and pause scanning until user inputs to serial monitor
-      else if (scanCount > COUNT_MAX) {
-        scanCount = 1;
-        nano.stopReading();
+      case RESPONSE_IS_TAGFOUND:
+        if (formatCheck == CSV_FORMAT && scanCount <= COUNT_MAX) {
+          printAsCSV();
+        }
+        // If maximum count has been reached, reset counter and pause scanning until user inputs to serial monitor
+        else if (formatCheck == CSV_FORMAT && scanCount > COUNT_MAX) {
+          scanCount = 1;
+          nano.stopReading();
 
-        while (!Serial.available());      //Wait for user to send a character
-        Serial.read();                    //Throw away the user's character
+          while (!Serial.available());      //Wait for user to send a character
+          Serial.read();                    //Throw away the user's character
 
-        Serial.print("Count, Time (ms), RSSI (dBm), Frequency (KHz), Timestamp (ms), EPC, Phase (Degrees)\n");
-        nano.startReading();
-      }
-      
-      break;
+          Serial.print("Count, Time (ms), RSSI (dBm), Frequency (KHz), Timestamp (ms), EPC, Phase (Degrees)\n");
+          nano.startReading();
+        }
+        else if (formatCheck == DEFAULT_FORMAT) {
+          printWithLabels();
+        }
+        break;
 
-    case DEFAULT_FORMAT:
-      printWithLabels();
-      break;
+      case ERROR_CORRUPT_RESPONSE:
+        if (!formatCheck)
+        Serial.println("Bad CRC");
+
+      default:
+        if (!formatCheck)
+        Serial.println("Unknown Error");
+
+    }
   }
 } 
-
