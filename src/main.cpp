@@ -197,6 +197,7 @@ void loop() {
       case RESPONSE_IS_KEEPALIVE:
         if (!formatCheck)
         Serial.println(F("Scanning"));
+        break;
 
       case RESPONSE_IS_TAGFOUND:
         if (formatCheck == CSV_FORMAT && scanCount <= COUNT_MAX) {
@@ -221,6 +222,16 @@ void loop() {
       case ERROR_CORRUPT_RESPONSE:
         if (!formatCheck)
         Serial.println("Bad CRC");
+        break;
+
+      // I have no idea what the difference between the next two responses are
+      case RESPONSE_IS_TEMPTHROTTLE:
+        Serial.println("TEMPERATURE THROTTLE");
+        break;
+
+      case RESPONSE_IS_TEMPERATURE:
+        Serial.println("TEMPERATURE");
+        break;
 
       default:
         if (!formatCheck)
