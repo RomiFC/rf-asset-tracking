@@ -13,10 +13,16 @@
   Versions downloaded online from SparkFun or the GitHub link above will not work.
 */
 
-
 // LIBRARIES
-#include <SoftwareSerial.h>           //If you run into compilation errors regarding this include, see README
 #include "SparkFun_UHF_RFID_Reader.h" //Library for controlling the M6E Nano module
+
+#ifdef ENV_ARDUINO_UNO
+#include <SoftwareSerial.h>           //If you run into compilation errors regarding this include, see README
+#endif
+
+// PINS
+#define SERIAL_RX 2
+#define SERIAL_TX 3
 
 // CONSTANTS
 #define COUNT_MAX 500     // Maximum amount of tags to be scanned before stopping
@@ -25,10 +31,10 @@
 #define CSV_FORMAT 1      // Print to serial monitor as csv and stop when COUNT_MAX tags have been scanned
 
 // GLOBAL VARIABLES
-bool formatCheck = 1;     // Determines if data is printed to serial monitor as csv (1) or with labels (0)
+bool formatCheck = 0;     // Determines if data is printed to serial monitor as csv (1) or with labels (0)
 int scanCount = 1;        // Tracks amount of tags scanned
 
-SoftwareSerial softSerial(2, 3); // Serial communication (RX, TX) on digital pins
+SoftwareSerial softSerial(SERIAL_RX, SERIAL_TX); // Serial communication (RX, TX) on digital pins
 RFID nano;                       // Create instance
 
 
