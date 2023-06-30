@@ -2,7 +2,7 @@ clear
 clc
 
 % Inputting data from datalog(0,1).csv
-datalog = readmatrix('datalog(0,1).csv', "Delimiter", ',', "VariableNamingRule", "Preserve");
+datalog = readmatrix('datalog(0,1).csv', "Delimiter", ' ', "VariableNamingRule", "Preserve");
 
 % Data processing
 RSSI = datalog(:, 3);
