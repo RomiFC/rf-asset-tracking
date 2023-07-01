@@ -659,16 +659,6 @@ uint32_t RFID::getTagFreq(void)
   return (freq);
 }
 
-//Pulls phase stored in msg
-uint32_t RFID::getTagPhase(void)
-{
-  uint32_t phase = 0;
-  for (uint8_t x = 0; x < 2; x++)
-    phase |= (uint32_t)msg[21 + x] << (8 * (1 - x));
-
-  return (phase);
-}
-
 //See parseResponse for breakdown of fields
 //Pulls the RSSI value from a full response record stored in msg
 int8_t RFID::getTagRSSI(void)
@@ -712,7 +702,6 @@ uint8_t RFID::parseResponse(void)
 
   //Check the CRC on this response
   uint16_t messageCRC = calculateCRC(&msg[1], msgLength - 3); //Ignore header (start spot 1), remove 3 bytes (header + 2 CRC)
-
   if ((msg[msgLength - 2] != (messageCRC >> 8)) || (msg[msgLength - 1] != (messageCRC & 0xFF)))
   {
     return (ERROR_CORRUPT_RESPONSE);

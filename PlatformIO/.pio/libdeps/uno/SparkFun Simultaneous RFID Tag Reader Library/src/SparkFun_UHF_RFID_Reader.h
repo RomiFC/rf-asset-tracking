@@ -1,4 +1,4 @@
-  /*
+/*
   Library for controlling the Nano M6E from ThingMagic
   This is a stripped down implementation of the Mercury API from ThingMagic
 
@@ -115,7 +115,6 @@ public:
   uint16_t getTagTimestamp(void); //Pull timestamp value from full record response
   uint32_t getTagFreq(void);      //Pull Freq value from full record response
   int8_t getTagRSSI(void);        //Pull RSSI value from full record response
-  uint32_t getTagPhase(void);     //Pull phase value from full record response
 
   bool check(void);
 

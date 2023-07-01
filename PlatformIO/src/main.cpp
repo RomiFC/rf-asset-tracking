@@ -14,13 +14,10 @@
 */
 
 // LIBRARIES
-#include "SparkFun_UHF_RFID_Reader.h" //Library for controlling the M6E Nano module
+#include "SparkFun_RFID_Custom.h" //Library for controlling the M6E Nano module
 
 #ifdef ENV_ARDUINO_UNO
 #include <SoftwareSerial.h>           //If you run into compilation errors regarding this include, see README
-#elif ENV_ESP32
-#define SoftwareSerial
-#define softSerial(rx,tx)
 #endif
 
 // PINS

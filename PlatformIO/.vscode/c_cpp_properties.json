@@ -8,12 +8,13 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "c:/Users/remyv/Documents/Capstone RFID Reader/include",
-                "c:/Users/remyv/Documents/Capstone RFID Reader/src",
+                "c:/Users/remyv/Documents/rfid-asset-tracking/PlatformIO/include",
+                "c:/Users/remyv/Documents/rfid-asset-tracking/PlatformIO/src",
                 "C:/Users/remyv/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-                "c:/Users/remyv/Documents/Capstone RFID Reader/.pio/libdeps/uno/SparkFun Simultaneous RFID Tag Reader Library/src",
+                "c:/Users/remyv/Documents/rfid-asset-tracking/PlatformIO/lib/SparkFun_RFID_Custom/src",
                 "C:/Users/remyv/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "C:/Users/remyv/.platformio/packages/framework-arduino-avr/variants/standard",
+                "c:/Users/remyv/Documents/rfid-asset-tracking/PlatformIO/.pio/libdeps/uno/SparkFun Simultaneous RFID Tag Reader Library/src",
                 "C:/Users/remyv/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
                 "C:/Users/remyv/.platformio/packages/framework-arduino-avr/libraries/HID/src",
                 "C:/Users/remyv/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
@@ -23,12 +24,13 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "c:/Users/remyv/Documents/Capstone RFID Reader/include",
-                    "c:/Users/remyv/Documents/Capstone RFID Reader/src",
+                    "c:/Users/remyv/Documents/rfid-asset-tracking/PlatformIO/include",
+                    "c:/Users/remyv/Documents/rfid-asset-tracking/PlatformIO/src",
                     "C:/Users/remyv/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
-                    "c:/Users/remyv/Documents/Capstone RFID Reader/.pio/libdeps/uno/SparkFun Simultaneous RFID Tag Reader Library/src",
+                    "c:/Users/remyv/Documents/rfid-asset-tracking/PlatformIO/lib/SparkFun_RFID_Custom/src",
                     "C:/Users/remyv/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "C:/Users/remyv/.platformio/packages/framework-arduino-avr/variants/standard",
+                    "c:/Users/remyv/Documents/rfid-asset-tracking/PlatformIO/.pio/libdeps/uno/SparkFun Simultaneous RFID Tag Reader Library/src",
                     "C:/Users/remyv/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
                     "C:/Users/remyv/.platformio/packages/framework-arduino-avr/libraries/HID/src",
                     "C:/Users/remyv/.platformio/packages/framework-arduino-avr/libraries/SPI/src",

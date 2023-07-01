@@ -39,7 +39,7 @@
 #include "WProgram.h"
 #endif
 
-#include "SparkFun_UHF_RFID_Reader.h"
+#include "SparkFun_RFID_Custom.h"
 
 RFID::RFID(void)
 {
@@ -712,6 +712,7 @@ uint8_t RFID::parseResponse(void)
 
   //Check the CRC on this response
   uint16_t messageCRC = calculateCRC(&msg[1], msgLength - 3); //Ignore header (start spot 1), remove 3 bytes (header + 2 CRC)
+
   if ((msg[msgLength - 2] != (messageCRC >> 8)) || (msg[msgLength - 1] != (messageCRC & 0xFF)))
   {
     return (ERROR_CORRUPT_RESPONSE);
