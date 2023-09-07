@@ -195,6 +195,10 @@ void setup()
 }
 
 void loop() {
+ // nano.startReading();
+
+  //delay(2000);
+
   if (nano.check() == true) {
     byte responseType = nano.parseResponse();
 
@@ -242,6 +246,8 @@ void loop() {
       default:
         if (!formatCheck)
         Serial.println("Unknown Error");
+
+      
 
     }
   }
