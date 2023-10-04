@@ -1,0 +1,12 @@
+2. Write a function which take 2 input values, min_val and max_val, and prints each number from min_val to max_val except for all numbers divisible by 3 where it will output "foo" and all numbers divisible by 5 where it will output "bar".
+
+void func(int min_val, int max_val) {
+    for (n = min_val; i <= max_val; n++) {
+        if (i%3 == 0)
+            fprintf("foo");
+        else if (i%5 == 0)
+            fprintf("bar");
+        else 
+            fprintf("%d", i)
+    }
+}
