@@ -33,4 +33,3 @@ client.on_message= on_message                      #attach function to callback
 client.connect(broker_address,port,60) #connect
 client.subscribe("dwm/node/5000/uplink/location") #subscribe
 client.loop_forever() #then keep listening forever
-#nsdfjasdjf
