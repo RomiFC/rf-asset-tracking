@@ -14,7 +14,7 @@ def on_message(client, userdata, message):
     print(payload_str)
     
     # Split the payload into an array using commas
-    data_string = payload_str.replace('{"position":{', "")
+    data_string = payload_str.replace('{"position":{', "" + 'x:', "" + 'y:', "" + 'z:', "" + 'quality:', "")
     data_array = data_string.split(',')
     
     # Print the array elements
