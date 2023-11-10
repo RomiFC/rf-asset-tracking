@@ -13,19 +13,24 @@ def on_message(client, userdata, message):
     payload_str = message.payload.decode('utf-8')
     print(payload_str)
     
-    # Split the payload into an array using commas
-    data_string = payload_str.replace('{"position":{', "" + 'x:', "" + 'y:', "" + 'z:', "" + 'quality:', "")
-    data_array = data_string.split(',')
+    char_remove = {'{"position":{': "", '"x":': "", '"y":': "", '"z":': "", '"quality":': "", "}": "", '"superFrameNumber":': ""} 
+
+    data_string = payload_str
+    # .keys() returns a list of all the keys in the dictionary
+    for key, value in char_remove.items():
+    # dictionaryName[keys] - another way to get value
+        data_string = data_string.replace(key, value)
     
-    # Print the array elements
-    print("Data Array:", data_array)
+        data_array = data_string.split(',')
+
+    #print(data_array)
 
     with open('/Users/mitchclark/Desktop/test.txt', 'a+') as f:
-        f.write("\n" + data_array[0] + " " + data_array[1] + " " + data_array[2] + " " + data_array[3] + "\n")
+        f.write("\n" + str(data_array) + "\n")
 
 Connected = False   # Global variable for the state of the connection
 
-broker_address = "192.168.129.11"  # Broker address
+broker_address = "192.168.68.94"  # Broker address
 port = 1883                         # Broker port
 user = ""                           # Connection username
 password = ""                       # Connection password
