@@ -28,7 +28,7 @@ def on_message(client, userdata, message, tag_node_id):
 
     with open(f'/Users/mitchclark/Desktop/test.txt', 'a+') as f:
         formatted_data = ",".join(data_array)
-        f.write(f"\n {'Timestamp: {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())}, {tag_node_id},{formatted_data}\n")
+        f.write(f"\n {'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())} {tag_node_id},{formatted_data}\n")
 
 Connected = False   # Global variable for the state of the connection
 
