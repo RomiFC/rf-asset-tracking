@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqttClient
 import time
 import datetime
+import os
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -26,7 +27,10 @@ def on_message(client, userdata, message, tag_node_id):
     
     data_array = data_string.split(' ')
 
-    with open(f'/Users/mitchclark/Desktop/test.txt', 'a+') as f:
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    file_path = os.path.join(script_dir, 'test.txt')
+
+    with open(file_path, 'a+') as f:
         formatted_data = ",".join(data_array)
         f.write(f"\n {'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())} {tag_node_id},{formatted_data}\n")
 
