@@ -1,3 +1,8 @@
+'''This is one of the biggest updates that comes with the code and is update number 3.
+Nahiyan helped and this code takes everything from test 2 and does a little better parsing,
+while also adding a node ID for each tag that is added to the code.
+This also adds a time stamp to the output text file and saves that file locally to the git folder'''
+
 import paho.mqtt.client as mqttClient
 import time
 import datetime

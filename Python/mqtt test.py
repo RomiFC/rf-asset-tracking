@@ -1,3 +1,6 @@
+#This is the original code that only connects the MQTT client and prints out exactly what the subscription says,
+#to both the terminal and a text file saved to my desktop.
+
 import paho.mqtt.client as mqttClient
 import time
 

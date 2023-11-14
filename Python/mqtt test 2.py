@@ -1,3 +1,6 @@
+'''This is the second version of the code where Nahiyan and Dino helped. 
+This code does the same as the first code but adds parsing to the payload comeing from the subscription'''
+
 import paho.mqtt.client as mqttClient
 import time
 

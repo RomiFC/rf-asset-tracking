@@ -1,3 +1,8 @@
+'''This is update 4, as of 11-14-23 this is the most updated code that fixes a big bug that we've had for a while.
+Instead of giving an error everytime the code runs, when it cant connect to the MQTT server.
+The code will now just keep trying to reconnect until it does connect, rather than crashing.
+This is great if the internet goes down at the facility, rather than the code failing, it will just try to reconnect.'''
+
 import paho.mqtt.client as mqttClient
 import time
 import datetime
