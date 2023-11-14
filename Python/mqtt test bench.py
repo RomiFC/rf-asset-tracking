@@ -1,3 +1,5 @@
+'''This is a test bench to test the formating part of the code, without needing to connect to the mqtt client'''
+
 import datetime
 import os
 import csv
