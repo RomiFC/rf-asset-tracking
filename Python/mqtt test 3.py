@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqttClient
 import time
+import datetime
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -8,6 +9,7 @@ def on_connect(client, userdata, flags, rc):
         Connected = True   # Signal connection
     else:
         print("Connection failed")
+        
 
 def on_message(client, userdata, message, tag_node_id):
     payload_str = message.payload.decode('utf-8')
@@ -26,11 +28,11 @@ def on_message(client, userdata, message, tag_node_id):
 
     with open(f'/Users/mitchclark/Desktop/test.txt', 'a+') as f:
         formatted_data = ",".join(data_array)
-        f.write(f"\n {tag_node_id},{formatted_data}\n")
+        f.write(f"\n {'Timestamp: {:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())}, {tag_node_id},{formatted_data}\n")
 
 Connected = False   # Global variable for the state of the connection
 
-broker_address = "192.168.68.94"  # Use Gateway IP address
+broker_address = "172.20.10.3"  # Use Gateway IP address
 port = 1883                         # Broker port
 user = ""                           # Connection username
 password = ""                       # Connection password
