@@ -16,7 +16,7 @@ def on_connect(client, userdata, flags, rc):
     else:
         print(f"Connection failed with result code {rc}")
         # Retry the connection after a delay
-        time.sleep(5)
+        time.sleep(1)
         client.connect(broker_address, port, 60)
 
 def on_message(client, userdata, message, tag_node_id):
