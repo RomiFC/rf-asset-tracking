@@ -1,4 +1,4 @@
-'''This update number 5 saves everything to a csv file rather than a txt file'''
+'''This update number 5, saves everything to a csv file rather than a txt file'''
 
 import paho.mqtt.client as mqttClient
 import time
