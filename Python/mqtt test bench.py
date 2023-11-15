@@ -3,7 +3,7 @@
 import datetime
 import os
 import csv
-import time  # Import the time module
+import time
 
 tag_node_id = 5000  # Initialize tag_node_id as a global variable
 payload_str = '{"position":{"x":1.00001 "y":1.00001 "z":1.00001 "quality":60 "superFrameNumber":500}'
