@@ -6,7 +6,7 @@ import csv
 import time
 
 tag_node_id = 5000  # Initialize tag_node_id as a global variable
-payload_str = '{"position":{"x":1.00001 "y":1.00001 "z":1.00001 "quality":60 "superFrameNumber":500}'
+payload_str = '{"position":{"x":0.5443446,"y":8.3553429,"z":-0.63554037,"quality":77},"superFrameNumber":848}'
 
 def handle_message():
     global tag_node_id
@@ -14,7 +14,7 @@ def handle_message():
     print(f"Tag Node ID: {tag_node_id}")
     print(payload_str)
     
-    char_remove = {'{"position":{': "", '"x":': "", '"y":': "", '"z":': "", '"quality":': "", '"superFrameNumber":': "", "}": ""} 
+    char_remove = {'{"position":{': "", '"x":': "", ',"y":': "", ',"z":': "", ',"quality":': "", ',"superFrameNumber":': "", "}": ""} 
     # Parses all of the unwanted information from the payload
 
     data_string = payload_str
