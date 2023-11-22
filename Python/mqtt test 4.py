@@ -2,7 +2,6 @@
 Instead of giving an error everytime the code runs, when it cant connect to the MQTT server.
 The code will now just keep trying to reconnect until it does connect, rather than crashing.
 This is great if the internet goes down at the facility, rather than the code failing, it will just try to reconnect.
-
 Updated the error handling of the code, also added a timer so the tags will communicate at whatever rate we set them to, but
 rather than recieving the payload at that rate, we have a delay to recieve them slower. per Dan'''
 
@@ -41,7 +40,7 @@ def on_message(client, userdata, message, tag_node_id):
         f.write(f"\n {'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())} {tag_node_id},{formatted_data}\n")
 
     # Introduce a delay of 1 second (you can adjust this value)
-    time.sleep(20)
+    time.sleep(60)
 
 Connected = False
 
@@ -54,12 +53,12 @@ client = mqttClient.Client("UWB")
 client.username_pw_set(user, password=password)
 client.on_connect = on_connect
 
-client.message_callback_add("dwm/node/1911/uplink/location", lambda client, userdata, message: on_message(client, userdata, message, tag_node_id=1911))
+client.message_callback_add("dwm/node/5000/uplink/location", lambda client, userdata, message: on_message(client, userdata, message, tag_node_id=5000))
 
 while not Connected:
     try:
         client.connect(broker_address, port, 60)
-        client.subscribe([("dwm/node/1911/uplink/location", 0)])
+        client.subscribe([("dwm/node/5000/uplink/location", 0)])
         client.loop_forever()
     except OSError:
         print("Connection failed, retrying...")
