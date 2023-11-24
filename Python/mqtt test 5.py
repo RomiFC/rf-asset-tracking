@@ -9,23 +9,18 @@ import csv
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to broker")
-        global Connected  # Use global variable
-        Connected = True   # Signal connection
+        client.subscribe("dwm/node/1911/uplink/location")
     else:
         print(f"Connection failed with result code {rc}")
-        # Retry the connection after a delay
-        time.sleep(1)
-        client.connect(broker_address, port, 60)
+        client.reconnect()
 
-def on_message(client, userdata, message, tag_node_id):
+def on_message(client, userdata, message):
     payload_str = message.payload.decode('utf-8')
-    topic = message.topic
+    tag_node_id = 1911 
     print(f"Tag Node ID: {tag_node_id}")
     print(payload_str)
     
     char_remove = {'{"position":{': "", '"x":': "", '"y":': "", '"z":': "", '"quality":': "", '"superFrameNumber":': "", "}": ""} 
-    # Parses all of the unwanted information from the payload
-
     data_string = payload_str
     for key, value in char_remove.items():
         data_string = data_string.replace(key, value)
@@ -37,29 +32,44 @@ def on_message(client, userdata, message, tag_node_id):
 
     with open(file_path, 'a+', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
-        formatted_data = [f"{'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())} {tag_node_id}"] + data_array
+        formatted_data = [f"{'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())}",tag_node_id,*data_array]
+
+# Add x, y, z as separate columns
+        formatted_data.extend(data_array)
+
+# Write the row to the CSV file
         csv_writer.writerow(formatted_data)
 
-Connected = False   # Global variable for the state of the connection
 
-broker_address = "172.20.10.3"  # Use Gateway IP address
-port = 1883                         # Broker port
-user = ""                           # Connection username
-password = ""                       # Connection password
+    # Introduce a delay of 1 second (you can adjust this value)
+    time.sleep(5)
 
-client = mqttClient.Client("UWB")               # Create a new instance, this name can be anything, it doesnt matter
-client.username_pw_set(user, password=password)    # Set username and password
-client.on_connect = on_connect                      # Attach function to callback
+Connected = False
 
-# Subscribe with tag node IDs
-client.message_callback_add("dwm/node/5000/uplink/location", lambda client, userdata, message: on_message(client, userdata, message, tag_node_id=5000))
-client.message_callback_add("dwm/node/1916/uplink/location", lambda client, userdata, message: on_message(client, userdata, message, tag_node_id=1916))
+broker_address = "192.168.68.94"
+port = 1883
+user = ""
+password = ""
 
-while not Connected:  # Keep trying to connect until successful
+client = mqttClient.Client("UWB")
+client.username_pw_set(user, password=password)
+client.on_connect = on_connect
+client.on_message = on_message
+
+while not Connected:
     try:
-        client.connect(broker_address, port, 60)            # Connect
-        client.subscribe([("dwm/node/5000/uplink/location", 0),("dwm/node/1916/uplink/location", 0)])  # Subscribe to tag node ID
-        client.loop_forever()                               # Then keep listening forever
-    except:
+        client.connect(broker_address, port, 60)  #the 60 corresponds to the number of seconds before the broker has to reconnect. But during testing i found its double this number before the broker must reconnect. I do not know why this is.
+        Connected = True  # Assume connection is successful
+        client.loop_start()  # Start the loop in the background
+    except OSError:
         print("Connection failed, retrying...")
-        time.sleep(5)  # Wait for a while before retrying
+        time.sleep(5)
+
+try:
+    while True:
+        time.sleep(1)
+except KeyboardInterrupt:
+    print("Disconnecting gracefully...")
+    client.disconnect()
+    client.loop_stop()
+    print("Disconnected.")
