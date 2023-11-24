@@ -13,15 +13,14 @@ import os
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to broker")
-        global Connected
-        Connected = True
+        client.subscribe("dwm/node/5000/uplink/location")
     else:
         print(f"Connection failed with result code {rc}")
         client.reconnect()
 
-def on_message(client, userdata, message, tag_node_id):
+def on_message(client, userdata, message):
     payload_str = message.payload.decode('utf-8')
-    topic = message.topic
+    tag_node_id = 5000  # Assuming it's a constant for this example
     print(f"Tag Node ID: {tag_node_id}")
     print(payload_str)
     
@@ -52,14 +51,22 @@ password = ""
 client = mqttClient.Client("UWB")
 client.username_pw_set(user, password=password)
 client.on_connect = on_connect
-
-client.message_callback_add("dwm/node/5000/uplink/location", lambda client, userdata, message: on_message(client, userdata, message, tag_node_id=5000))
+client.on_message = on_message
 
 while not Connected:
     try:
         client.connect(broker_address, port, 60)
-        client.subscribe([("dwm/node/5000/uplink/location", 0)])
-        client.loop_forever()
+        Connected = True  # Assume connection is successful
+        client.loop_start()  # Start the loop in the background
     except OSError:
         print("Connection failed, retrying...")
         time.sleep(5)
+
+try:
+    while True:
+        time.sleep(1)
+except KeyboardInterrupt:
+    print("Disconnecting gracefully...")
+    client.disconnect()
+    client.loop_stop()
+    print("Disconnected.")
