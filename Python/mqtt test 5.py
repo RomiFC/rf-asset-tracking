@@ -32,14 +32,8 @@ def on_message(client, userdata, message):
 
     with open(file_path, 'a+', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
-        formatted_data = [f"{'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())}",tag_node_id,*data_array]
-
-# Add x, y, z as separate columns
-        formatted_data.extend(data_array)
-
-# Write the row to the CSV file
+        formatted_data = [f"{'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())}"] + [tag_node_id] + data_array
         csv_writer.writerow(formatted_data)
-
 
     # Introduce a delay of 1 second (you can adjust this value)
     time.sleep(5)
