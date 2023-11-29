@@ -9,20 +9,20 @@ import csv
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to broker")
-        client.subscribe("dwm/node/1911/uplink/location")
+        client.subscribe("dwm/node/5000/uplink/location")
     else:
         print(f"Connection failed with result code {rc}")
         client.reconnect()
 
 def on_message(client, userdata, message):
     payload_str = message.payload.decode('utf-8')
-    tag_node_id = 1911 
+    tag_node_id = 5000 
     print(f"Tag Node ID: {tag_node_id}")
     print(payload_str)
     
-    char_remove = {'{"position":{': "", '"x":': "", '"y":': "", '"z":': "", '"quality":': "", '"superFrameNumber":': "", "}": ""} 
+    remove_chars = {'{"position":{': "", '"x":': "", '"y":': "", '"z":': "", '"quality":': "", '"superFrameNumber":': "", "}": ""} 
     data_string = payload_str
-    for key, value in char_remove.items():
+    for key, value in remove_chars.items():
         data_string = data_string.replace(key, value)
     
     data_array = data_string.split(' ')
@@ -36,11 +36,11 @@ def on_message(client, userdata, message):
         csv_writer.writerow(formatted_data)
 
     # Introduce a delay of 1 second (you can adjust this value)
-    time.sleep(5)
+    time.sleep(10)
 
 Connected = False
 
-broker_address = "192.168.68.94"
+broker_address = "172.20.10.4"
 port = 1883
 user = ""
 password = ""
