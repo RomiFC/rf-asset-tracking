@@ -11,7 +11,7 @@ payload_str = '{"position":{"x":0.5443446,"y":8.3553429,"z":-0.63554037,"quality
 def handle_message():
     global tag_node_id
     global payload_str
-    print(f"Tag Node ID: {tag_node_id}")
+    #print(f"Tag Node ID: {tag_node_id}")
     print(payload_str)
     
     char_remove = {'{"position":{': "", '"x":': "", ',"y":': "", ',"z":': "", ',"quality":': "", ',"superFrameNumber":': "", "}": ""} 
